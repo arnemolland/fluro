@@ -25,8 +25,7 @@ class Router {
   Handler notFoundHandler;
 
   /// Creates a [PageRoute] definition for the passed [RouteHandler]. You can optionally provide a default transition type.
-  void define(String routePath,
-      {@required Handler handler, TransitionType transitionType}) {
+  void define(String routePath, {@required Handler handler, TransitionType transitionType}) {
     _routeTree.addRoute(
       AppRoute(routePath, handler, transitionType: transitionType),
     );
@@ -38,7 +37,7 @@ class Router {
     return _routeTree.matchRoute(path);
   }
 
-  bool pop(BuildContext context) => Navigator.pop(context);
+  dynamic pop(BuildContext context) => Navigator.pop<dynamic>(context);
 
   ///
   Future navigateTo(BuildContext context, String path,
@@ -62,12 +61,10 @@ class Router {
       }
       if (route != null) {
         if (clearStack) {
-          future =
-              Navigator.pushAndRemoveUntil(context, route, (check) => false);
+          future = Navigator.pushAndRemoveUntil(context, route, (check) => false);
         } else {
-          future = replace
-              ? Navigator.pushReplacement(context, route)
-              : Navigator.push(context, route);
+          future =
+              replace ? Navigator.pushReplacement(context, route) : Navigator.push(context, route);
         }
         completer.complete();
       } else {
@@ -112,20 +109,17 @@ class Router {
     }
     if (route == null && notFoundHandler == null) {
       return RouteMatch(
-          matchType: RouteMatchType.noMatch,
-          errorMessage: "No matching route was found");
+          matchType: RouteMatchType.noMatch, errorMessage: "No matching route was found");
     }
-    Map<String, List<String>> parameters =
-        match?.parameters ?? <String, List<String>>{};
+    Map<String, List<String>> parameters = match?.parameters ?? <String, List<String>>{};
     if (handler.type == HandlerType.function) {
       handler.handlerFunc(buildContext, parameters);
       return RouteMatch(matchType: RouteMatchType.nonVisual);
     }
 
-    RouteCreator creator =
-        (RouteSettings routeSettings, Map<String, List<String>> parameters) {
-      bool isNativeTransition = (transition == TransitionType.native ||
-          transition == TransitionType.nativeModal);
+    RouteCreator creator = (RouteSettings routeSettings, Map<String, List<String>> parameters) {
+      bool isNativeTransition =
+          (transition == TransitionType.native || transition == TransitionType.nativeModal);
       if (isNativeTransition) {
         if (Platform.isIOS) {
           return CupertinoPageRoute<dynamic>(
@@ -146,8 +140,7 @@ class Router {
           transition == TransitionType.materialFullScreenDialog) {
         return MaterialPageRoute<dynamic>(
             settings: routeSettings,
-            fullscreenDialog:
-                transition == TransitionType.materialFullScreenDialog,
+            fullscreenDialog: transition == TransitionType.materialFullScreenDialog,
             builder: (BuildContext context) {
               return handler.handlerFunc(context, parameters);
             });
@@ -155,8 +148,7 @@ class Router {
           transition == TransitionType.cupertinoFullScreenDialog) {
         return CupertinoPageRoute<dynamic>(
             settings: routeSettings,
-            fullscreenDialog:
-                transition == TransitionType.cupertinoFullScreenDialog,
+            fullscreenDialog: transition == TransitionType.cupertinoFullScreenDialog,
             builder: (BuildContext context) {
               return handler.handlerFunc(context, parameters);
             });
@@ -184,10 +176,9 @@ class Router {
     );
   }
 
-  RouteTransitionsBuilder _standardTransitionsBuilder(
-      TransitionType transitionType) {
-    return (BuildContext context, Animation<double> animation,
-        Animation<double> secondaryAnimation, Widget child) {
+  RouteTransitionsBuilder _standardTransitionsBuilder(TransitionType transitionType) {
+    return (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation,
+        Widget child) {
       if (transitionType == TransitionType.fadeIn) {
         return FadeTransition(opacity: animation, child: child);
       } else {
@@ -219,8 +210,7 @@ class Router {
   /// if any defined handler is found. It can also be used with the [MaterialApp.onGenerateRoute]
   /// property as callback to create routes that can be used with the [Navigator] class.
   Route<dynamic> generator(RouteSettings routeSettings) {
-    RouteMatch match =
-        matchRoute(null, routeSettings.name, routeSettings: routeSettings);
+    RouteMatch match = matchRoute(null, routeSettings.name, routeSettings: routeSettings);
     return match.route;
   }
 
