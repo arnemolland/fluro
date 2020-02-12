@@ -37,9 +37,8 @@ class Router {
     return _routeTree.matchRoute(path);
   }
 
-  dynamic pop(BuildContext context) => Navigator.pop<dynamic>(context);
+  dynamic pop(BuildContext context) => Navigator.pop<dynamic>(context, [dynamic]);
 
-  ///
   Future navigateTo(BuildContext context, String path,
       {bool replace = false,
       bool clearStack = false,
